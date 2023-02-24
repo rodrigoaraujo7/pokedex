@@ -1,7 +1,7 @@
 import { atom } from 'recoil';
 import { IPokemon, IPokemonFetch } from '../../interface';
 
-export const atomPokemonSearch = atom({
+export const atomPokemonSearch = atom<string | undefined>({
   key: 'atomPokemonSearch',
   default: ''
 })

@@ -6,10 +6,12 @@ import { IPokemon, IPokemonFetch } from '../../interface';
 
 // recoil: atoms
 import { atomPokemonFetch, atomPokemonOffset, atomPokemonSearch } from '../atoms'
+import { atomHashPokemonsFetch, atomHashPokemonsList } from '../hashs';
 
 export const selectorFetchPokemons = selector({
   key: 'selectorFetchPokemons',
   get: async ({ get }) => {
+    get(atomHashPokemonsFetch)
     const offSet = get(atomPokemonOffset); // limit
 
     const { data } = await requester({
@@ -23,6 +25,7 @@ export const selectorFetchPokemons = selector({
 export const selectorGetPokemons = selector({
   key: 'selectorGetPokemons',
   get: async ({ get }) => {
+    get(atomHashPokemonsList)
     const pokemonFetch = get(atomPokemonFetch);
 
     if(pokemonFetch.length > 0) {
