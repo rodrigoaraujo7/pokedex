@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-export const atomPokemon = atom({
-  key: 'atomPokemon',
+export const atomPokemonSearch = atom({
+  key: 'atomPokemonSearch',
   default: ''
 })

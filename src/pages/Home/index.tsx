@@ -3,7 +3,7 @@ import { useRecoilState, useRecoilValueLoadable } from 'recoil'
 import Card from '../../components/Card';
 
 // recoil: atoms
-import { atomPokemon } from '../../store/atoms';
+import { atomPokemonSearch } from '../../store/atoms';
 
 // recoil: selectors
 import { selectorGetPokemon } from '../../store/selectors';
@@ -13,7 +13,7 @@ const Home = () => {
   const [searchPokemon, setSearchPokemon] = useState('');
 
   // recoil: states
-  const [pokemon, setPokemon] = useRecoilState(atomPokemon);
+  const [pokemon, setPokemon] = useRecoilState(atomPokemonSearch);
 
   // recoil: loadable
   const getLoadablePokemon = useRecoilValueLoadable(selectorGetPokemon);
@@ -28,12 +28,18 @@ const Home = () => {
       {getLoadablePokemon?.state === "hasValue" &&
         getLoadablePokemon?.contents !== undefined && (
           <Card
-            id={getLoadablePokemon?.contents?.id}
+            id={getLoadablePokemon.contents.id}
             name={getLoadablePokemon?.contents?.name}
-            image={getLoadablePokemon?.contents?.sprites?.other?.dream_world?.front_default}
-            preview={getLoadablePokemon?.contents?.sprites?.versions?.[
-              "generation-v"
-            ]?.["black-white"].animated?.front_default}
+            image={
+              getLoadablePokemon?.contents?.sprites?.other?.dream_world?.front_default
+              || getLoadablePokemon?.contents.sprites.other?.['official-artwork']?.front_default
+              || ''
+            }
+            preview={
+              getLoadablePokemon?.contents?.sprites?.versions?.[
+                "generation-v"
+              ]?.["black-white"]?.animated?.front_default
+            }
             type={getLoadablePokemon?.contents?.types[0]?.type?.name}
           />
         )
