@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRecoilState, useRecoilValueLoadable } from 'recoil'
+import Card from '../../components/Card';
 
 // recoil: atoms
 import { atomPokemon } from '../../store/atoms';
@@ -26,13 +27,10 @@ const Home = () => {
       {getLoadablePokemon?.state === "loading" && <div>Loading ...</div>}
       {getLoadablePokemon?.state === "hasValue" &&
         getLoadablePokemon?.contents !== undefined && (
-          <div>
-            <img
-              src={getLoadablePokemon?.contents?.sprites?.front_default}
-              alt={`pokemon-${getLoadablePokemon?.contents?.name}`}
-            />
-            <h3>{getLoadablePokemon?.contents?.name}</h3>
-          </div>
+          <Card
+            name={getLoadablePokemon?.contents?.name}
+            image={getLoadablePokemon?.contents?.sprites?.other?.dream_world?.front_default}
+          />
         )
       }
     </div>
