@@ -5,9 +5,9 @@ import { requester } from '../../api/requester';
 import { IPokemon, IPokemonFetch } from '../../interface';
 
 // recoil: atoms
-import { atomPokemonOffset, atomPokemonSearch } from '../atoms'
+import { atomPokemonFetch, atomPokemonOffset, atomPokemonSearch } from '../atoms'
 
-export const selectorFetchPokemons = selector<IPokemonFetch[]>({
+export const selectorFetchPokemons = selector({
   key: 'selectorFetchPokemons',
   get: async ({ get }) => {
     const offSet = get(atomPokemonOffset); // limit
@@ -20,7 +20,30 @@ export const selectorFetchPokemons = selector<IPokemonFetch[]>({
   }
 })
 
-export const selectorGetPokemon = selector<IPokemon>({
+export const selectorGetPokemons = selector({
+  key: 'selectorGetPokemons',
+  get: async ({ get }) => {
+    const pokemonFetch = get(atomPokemonFetch);
+
+    if(pokemonFetch.length > 0) {
+      const list = pokemonFetch.map((pokemon: IPokemonFetch) => pokemon.name)
+
+      const result = list.map(async (pokemon) => {
+        const { data } = await requester({
+          baseURL: "https://pokeapi.co/api/v2",
+        }).get(`/pokemon/${pokemon.toLowerCase().trim()}`);
+
+        return data;
+      })
+
+      const pokemonsList = Promise.all(result);
+
+      return pokemonsList;
+    }
+  }
+})
+
+export const selectorGetPokemon = selector({
   key: 'selectorGetPokemon',
   get: async ({ get }) => {
     const pokemon = get(atomPokemonSearch);
