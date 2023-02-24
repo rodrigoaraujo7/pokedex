@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValueLoadable } from 'recoil'
 import Card from '../../components/Card';
 
@@ -6,7 +6,7 @@ import Card from '../../components/Card';
 import { atomPokemonSearch } from '../../store/atoms';
 
 // recoil: selectors
-import { selectorGetPokemon } from '../../store/selectors';
+import { selectorFetchPokemons, selectorGetPokemon } from '../../store/selectors';
 
 const Home = () => {
   // local: states
@@ -17,8 +17,11 @@ const Home = () => {
 
   // recoil: loadable
   const getLoadablePokemon = useRecoilValueLoadable(selectorGetPokemon);
+  const fetchLoadablePokemon = useRecoilValueLoadable(selectorFetchPokemons);
 
-  console.log(getLoadablePokemon?.contents)
+  useEffect(() => {
+    console.log(fetchLoadablePokemon.contents.results)
+  }, [fetchLoadablePokemon])
 
   return (
     <div>
