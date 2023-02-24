@@ -9,7 +9,12 @@ import {
 } from 'recoil'
 
 // recoil: atoms
-import { atomPokemonFetch, atomPokemonOffset, atomPokemonSearch } from '../../store/atoms';
+import {
+  atomPokemonFetch,
+  atomPokemonList,
+  atomPokemonOffset,
+  atomPokemonSearch
+} from '../../store/atoms';
 
 // recoil: selectors
 import {
@@ -27,6 +32,7 @@ const Home = () => {
   const setPokemon = useSetRecoilState(atomPokemonSearch);
   const setFetchPokemons = useSetRecoilState(atomPokemonFetch);
   const [pokemonsOffset, setPokemonsOffset] = useRecoilState(atomPokemonOffset)
+  const [pokemonList, setPokemonList] = useRecoilState(atomPokemonList);
 
   // recoil: loadable
   const getLoadablePokemons = useRecoilValueLoadable(selectorGetPokemons)
@@ -43,8 +49,17 @@ const Home = () => {
   }, [fetchLoadablePokemon.state, fetchLoadablePokemon.contents])
 
   useEffect(() => {
-    console.log(getLoadablePokemons.contents)
-  }, [getLoadablePokemons])
+    if (
+      getLoadablePokemons.state === 'hasValue'
+      && getLoadablePokemons.contents !== undefined
+    ) {
+      if (pokemonList.length > 0) {
+        setPokemonList(pokemonList.concat(getLoadablePokemons.contents))
+      } else {
+        setPokemonList(getLoadablePokemons.contents)
+      }
+    }
+  }, [getLoadablePokemons.state, getLoadablePokemons.contents])
 
   return (
     <Container>
@@ -71,6 +86,25 @@ const Home = () => {
             />
           )
         }
+      </FlexBox>
+      <FlexBox align='flex-start' justify='center' direction='row' gap='xxs'>
+        {pokemonList.map((pokemon) => (
+          <Card
+            id={pokemon.id}
+            name={pokemon.name}
+            image={
+              pokemon.sprites?.other?.dream_world?.front_default
+              || pokemon.sprites.other?.['official-artwork']?.front_default
+              || ''
+            }
+            preview={
+              pokemon.sprites?.versions?.[
+                "generation-v"
+              ]?.["black-white"]?.animated?.front_default
+            }
+            type={pokemon.types[0]?.type?.name}
+          />
+        ))}
       </FlexBox>
       <button onClick={() => setPokemonsOffset(pokemonsOffset + 15)}>
         Carregar mais
