@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+
+//  styled-components: components
 import Card from '../../components/Card';
+import { PokedexView } from '../../components/PokedexView';
+import Button from '../../components/Button';
+import Input from '../../components/Input';
 
 // recoi: hooks
 import {
@@ -102,7 +107,11 @@ const Home = () => {
       && getLoadablePokemons.contents !== undefined
     ) {
       if (pokemonList.length > 0) {
-        setPokemonList(pokemonList.concat(getLoadablePokemons.contents))
+        const filteredList = getLoadablePokemons.contents.filter(
+          (pokemon) => !pokemonList.find(item => item.name === pokemon.name)
+        )
+
+        setPokemonList(pokemonList.concat(filteredList))
       } else {
         setPokemonList(getLoadablePokemons.contents)
       }
@@ -112,8 +121,14 @@ const Home = () => {
   return (
     <Container>
       <FlexBox align='flex-start' justify='center' direction='column' gap='xxs'>
-        <input type="text" onChange={(event) => setSearchPokemon(event.target.value)} />
-        <button onClick={() => setPokemon(searchPokemon)}>Procurar</button>
+        <FlexBox align='center' justify='flex-start' direction='row' gap='xxs'>
+          <Input
+            type="text"
+            placeholder='Procurar por nome ou ID'
+            onChange={(event) => setSearchPokemon(event.target.value)}
+          />
+          <Button textButton='Procurar' onClick={() => setPokemon(searchPokemon)} />
+        </FlexBox>
         {getLoadablePokemon?.state === "loading" && <div>Loading ...</div>}
         {getLoadablePokemon?.state === "hasValue" &&
           getLoadablePokemon?.contents !== undefined && (
@@ -122,7 +137,7 @@ const Home = () => {
               name={getLoadablePokemon?.contents?.name}
               image={
                 getLoadablePokemon?.contents?.sprites?.other?.dream_world?.front_default
-                || getLoadablePokemon?.contents.sprites.other?.['official-artwork']?.front_shiny
+                || getLoadablePokemon?.contents.sprites.other?.['official-artwork']?.front_default
                 || ''
               }
               preview={
@@ -135,7 +150,7 @@ const Home = () => {
           )
         }
       </FlexBox>
-      <FlexBox align='flex-start' justify='center' direction='row' gap='xxs'>
+      <PokedexView align='center' justify='center' direction='row' gap='xxs' wrap='wrap'>
         {pokemonList.map((pokemon, index) => (
           <Card key={index}
             id={pokemon.id}
@@ -153,20 +168,17 @@ const Home = () => {
             type={pokemon.types[0]?.type?.name}
           />
         ))}
+      </PokedexView>
+      <FlexBox align='flex-start' justify='center' direction='column'>
+        <Button
+          disabled={disabledFetchMorePokemons}
+          textButton='Carregar mais'
+          onClick={() => setPokemonsOffset(pokemonsOffset + 10)}
+        />
+        {hasFetchPokemonError && (
+          <Button textButton='Tentar novamente' onClick={() => retryFetchMorePokemons()} />
+        )}
       </FlexBox>
-      <button
-        disabled={disabledFetchMorePokemons}
-        onClick={() => setPokemonsOffset(pokemonsOffset + 15)}
-      >
-        Carregar mais
-      </button>
-      {hasFetchPokemonError && (
-        <button
-          onClick={() => retryFetchMorePokemons()}
-        >
-          Tentar novamente
-        </button>
-      )}
     </Container>
   )
 };

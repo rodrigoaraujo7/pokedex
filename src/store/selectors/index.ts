@@ -16,7 +16,7 @@ export const selectorFetchPokemons = selector({
 
     const { data } = await requester({
       baseURL: "https://pokeapi.co/api/v2",
-    }).get(`/pokemon?limit=15&offset=${offSet}`);
+    }).get(`/pokemon?limit=10&offset=${offSet}`);
 
     return data;
   }

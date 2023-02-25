@@ -20,10 +20,10 @@ const Card: FC<ICardProps> = ({ id, name, image, preview, type }) => {
       <Atom.PokemonSpot type={type} align="center" justify="center" direction="column">
         <Atom.PokemonSprite src={image} />
       </Atom.PokemonSpot>
-      <FlexBox align="center" justify="space-between" direction="row">
+      <Atom.PokemonPreviewSection align="center" justify="space-between" direction="row">
         <Atom.PokemonText type={type}>{name}</Atom.PokemonText>
         {preview && <img src={preview} alt="" />}
-      </FlexBox>
+      </Atom.PokemonPreviewSection>
     </Atom.Container>
   )
 }
