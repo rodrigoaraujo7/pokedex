@@ -5,6 +5,7 @@ import Card from '../../components/Card';
 import { PokedexView } from '../../components/PokedexView';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
+import PokemonCount from '../../components/PokemonCount';
 
 // recoi: hooks
 import {
@@ -150,6 +151,7 @@ const Home = () => {
           )
         }
       </FlexBox>
+      <PokemonCount count={fetchLoadablePokemon?.contents?.count || 0} />
       <PokedexView align='center' justify='center' direction='row' gap='xxs' wrap='wrap'>
         {pokemonList.map((pokemon, index) => (
           <Card key={index}

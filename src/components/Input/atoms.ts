@@ -12,6 +12,8 @@ export const Input = styled.input`
   color: ${(props) => props.theme.font.colors.pure};
   width: 100%;
 
+  outline: none;
+
   ::placeholder {
     color: ${(props) => props.theme.font.colors[3]};
   }
