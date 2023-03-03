@@ -1,11 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+// icons
+import { MdAdd, MdAutorenew, MdSearch } from 'react-icons/md'
+
 //  styled-components: components
+import { Container, FlexBox } from '../../components';
 import Card from '../../components/Card';
 import { PokedexView } from '../../components/PokedexView';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import PokemonCount from '../../components/PokemonCount';
+import Loading from '../../components/Loading';
 
 // recoi: hooks
 import {
@@ -29,7 +34,6 @@ import {
   selectorGetPokemon,
   selectorGetPokemons
 } from '../../store/selectors';
-import { Container, FlexBox } from '../../components';
 
 // recoil: hashs
 import {
@@ -92,6 +96,10 @@ const Home = () => {
     }
   }, [fetchLoadablePokemon.state, getLoadablePokemons.state])
 
+  const pokemonsCounter = useMemo(() => {
+    return fetchLoadablePokemon.contents?.count || 0
+  }, [fetchLoadablePokemon.contents.count])
+
   const retryFetchMorePokemons = useCallback(() => {
     if (fetchLoadablePokemon.state === 'hasError') {
       setHashFetchMorePokemons(hashFetchMorePokemons + 1)
@@ -128,9 +136,11 @@ const Home = () => {
             placeholder='Procurar por nome ou ID'
             onChange={(event) => setSearchPokemon(event.target.value)}
           />
-          <Button textButton='Procurar' onClick={() => setPokemon(searchPokemon)} />
+          <Button onClick={() => setPokemon(searchPokemon)}>
+            <MdSearch size="20" />
+            Procurar
+          </Button>
         </FlexBox>
-        {getLoadablePokemon?.state === "loading" && <div>Loading ...</div>}
         {getLoadablePokemon?.state === "hasValue" &&
           getLoadablePokemon?.contents !== undefined && (
             <Card
@@ -151,34 +161,48 @@ const Home = () => {
           )
         }
       </FlexBox>
-      <PokemonCount count={fetchLoadablePokemon?.contents?.count || 0} />
-      <PokedexView align='center' justify='center' direction='row' gap='xxs' wrap='wrap'>
-        {pokemonList.map((pokemon, index) => (
-          <Card key={index}
-            id={pokemon.id}
-            name={pokemon.name}
-            image={
-              pokemon.sprites?.other?.dream_world?.front_default
-              || pokemon.sprites.other?.['official-artwork']?.front_default
-              || ''
+      <PokemonCount count={pokemonsCounter} />
+      <PokedexView align='flex-start' justify='center' direction='column' gap='xxs'>
+        <FlexBox align='center' justify='center' direction='row' gap='xxs' wrap='wrap'>
+          {pokemonList.map((pokemon, index) => (
+            <Card key={index}
+              id={pokemon.id}
+              name={pokemon.name}
+              image={
+                pokemon.sprites?.other?.dream_world?.front_default
+                || pokemon.sprites.other?.['official-artwork']?.front_default
+                || ''
+              }
+              preview={
+                pokemon.sprites?.versions?.[
+                  "generation-v"
+                ]?.["black-white"]?.animated?.front_default
+              }
+              type={pokemon.types[0]?.type?.name}
+            />
+          ))}
+          <Loading
+            loadingText='Carregando pokemons...'
+            isLoading={
+              getLoadablePokemons.state === 'loading'
+              || fetchLoadablePokemon.state === 'loading'
             }
-            preview={
-              pokemon.sprites?.versions?.[
-                "generation-v"
-              ]?.["black-white"]?.animated?.front_default
-            }
-            type={pokemon.types[0]?.type?.name}
           />
-        ))}
+        </FlexBox>
       </PokedexView>
       <FlexBox align='flex-start' justify='center' direction='column'>
         <Button
           disabled={disabledFetchMorePokemons}
-          textButton='Carregar mais'
           onClick={() => setPokemonsOffset(pokemonsOffset + 10)}
-        />
+        >
+          <MdAdd size="20" />
+          Carregar mais
+        </Button>
         {hasFetchPokemonError && (
-          <Button textButton='Tentar novamente' onClick={() => retryFetchMorePokemons()} />
+          <Button onClick={() => retryFetchMorePokemons()}>
+            <MdAutorenew size="20" />
+            Tentar novamente
+          </Button>
         )}
       </FlexBox>
     </Container>
